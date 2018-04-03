@@ -1,0 +1,6 @@
+# To authenticate with CloudFlare.com, set the following environment
+# variables:
+
+export TF_VAR_CLOUDFLARE_EMAIL='your@email'
+export TF_VAR_CLOUDFLARE_TOKEN='someTOKEN'
+

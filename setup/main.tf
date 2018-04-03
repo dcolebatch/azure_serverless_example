@@ -12,6 +12,14 @@ provider "azurerm" {
   version = "~> 1.3"
 }
 
+# Configure the Cloudflare provider
+variable CLOUDFLARE_EMAIL {}
+variable CLOUDFLARE_TOKEN {}
+
+provider "cloudflare" {
+  email = "${var.CLOUDFLARE_EMAIL}"
+  token = "${var.CLOUDFLARE_TOKEN}"
+}
 
 #######################################################################
 ### 1. Resource Group:
@@ -81,76 +89,43 @@ output "css" {
 # We need to use a Content Delivery Network (CDN) to map a custom domain
 # to the Blob store contents. Specifically, we must use the 
 # Premium (Verizon) CDN.
-resource "azurerm_cdn_profile" "test" {
-  name = "myfirstcdnprofile"
-  resource_group_name = "${azurerm_resource_group.serverless.name}"
-  location            = "West US"
-  sku                 = "Premium_Verizon"
 
-  tags {
-    environment = "Serverless Example"
-  }
-}
-
-resource "azurerm_cdn_endpoint" "test" {
-  name                = "${random_id.server.hex}"
-  profile_name        = "${azurerm_cdn_profile.test.name}"
-  location            = "${azurerm_resource_group.serverless.location}"
-  resource_group_name = "${azurerm_resource_group.serverless.name}"
-
-  origin {
-    name      = "exampleCdnOrigin"
-    host_name = "azure.serverlessexample.ga"
-  }
-}
-
-resource "azurerm_cdn_endpoint" "api" {
-  name                = "${random_id.server.hex}"
-  profile_name        = "${azurerm_cdn_profile.test.name}"
-  location            = "${azurerm_resource_group.serverless.location}"
-  resource_group_name = "${azurerm_resource_group.serverless.name}"
-
-  origin {
-    name      = "exampleCdnOrigin"
-    host_name = "api.serverlessexample.ga"
-  }
-}
+# No need, CloudFlare will provide our CDN with just the below DNS
+# config
 
 #######################################################################
 ### 4. DNS:
-# You likely created this zone already, when setting up a newly registered
-# domain name and configuring the initial NS records.
-#
-# resource "azurerm_dns_zone" "example" {
-#  name                = "serverlessexample.ga"
-#  resource_group_name = "${azurerm_resource_group.serverless.name}"
-#}
-
-resource "azurerm_dns_a_record" "example" {
-  name                = "meow"
-  zone_name           = "serverlessexample.ga"
-  resource_group_name = "mydnsrg"
-  ttl                 = 300
-  records             = ["${azurerm_container_group.aci-api.ip_address}"]
+# Since we want to make use of a free CDN and SSL termination service,
+# head over to CloudFlare.com, create your domain, and use the below to 
+# configure it.  
+resource "cloudflare_record" "cfmeow" {
+  domain  = "serverlessexample.ga"
+  name    = "meow"
+  value   = "${azurerm_container_group.aci-api.ip_address}"
+  type    = "A"
+  # Enabling CDN is as easy as:
+  proxied = true
+  # ttl of 1 is "Automatic" in CloudFlare.  If you're using CDN, you
+  # want this
+  ttl     = 1
 }
-resource "azurerm_dns_cname_record" "exampleapi" {
-  name                = "api"
-  zone_name           = "serverlessexample.ga"
-  resource_group_name = "mydnsrg"
-  ttl                 = 300
-  # You'll set this up in the "Supplementary" portal for Verizon Premium CDN
-  record             = "meow.azureedge.net"
-}
-resource "azurerm_dns_cname_record" "example" {
-  name                = "azure"
-  zone_name           = "serverlessexample.ga"
-  resource_group_name = "mydnsrg"
-  ttl                 = 300
-  # You'll set this up in the "Supplementary" portal for Verizon Premium CDN
-  record             = "serverlessexample.azureedge.net"
+resource "cloudflare_record" "cfapi" {
+  domain  = "serverlessexample.ga"
+  name    = "api"
+  value   = "meow.azureedge.net"
+  type    = "CNAME"
+  proxied = true
+  ttl     = 1
 }
 
-
+resource "cloudflare_record" "cfazure" {
+  domain  = "serverlessexample.ga"
+  name    = "azure"
+  value   = "serverlessexample.azureedge.net"
+  type    = "CNAME"
+  proxied = true
+  ttl     = 1
+}
 
 #######################################################################
 ### 5. Azure Container Instance:
