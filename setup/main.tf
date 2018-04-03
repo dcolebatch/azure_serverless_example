@@ -104,6 +104,18 @@ resource "azurerm_cdn_endpoint" "test" {
   }
 }
 
+resource "azurerm_cdn_endpoint" "api" {
+  name                = "${random_id.server.hex}"
+  profile_name        = "${azurerm_cdn_profile.test.name}"
+  location            = "${azurerm_resource_group.serverless.location}"
+  resource_group_name = "${azurerm_resource_group.serverless.name}"
+
+  origin {
+    name      = "exampleCdnOrigin"
+    host_name = "api.serverlessexample.ga"
+  }
+}
+
 #######################################################################
 ### 4. DNS:
 # You likely created this zone already, when setting up a newly registered
@@ -115,11 +127,19 @@ resource "azurerm_cdn_endpoint" "test" {
 #}
 
 resource "azurerm_dns_a_record" "example" {
-  name                = "api"
+  name                = "meow"
   zone_name           = "serverlessexample.ga"
   resource_group_name = "mydnsrg"
   ttl                 = 300
   records             = ["${azurerm_container_group.aci-api.ip_address}"]
+}
+resource "azurerm_dns_cname_record" "exampleapi" {
+  name                = "api"
+  zone_name           = "serverlessexample.ga"
+  resource_group_name = "mydnsrg"
+  ttl                 = 300
+  # You'll set this up in the "Supplementary" portal for Verizon Premium CDN
+  record             = "meow.azureedge.net"
 }
 resource "azurerm_dns_cname_record" "example" {
   name                = "azure"
