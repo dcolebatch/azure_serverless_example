@@ -117,6 +117,17 @@ resource "cloudflare_record" "cfazure" {
   ttl     = 300
 }
 
+# If you need to use the "Indirect CNAME Verification" method, you'll
+# want something like this:
+#
+#  resource "cloudflare_record" "cfazure_verify" {
+#   domain  = "serverlessexample.ga"
+#   name    = "asverify.azure"
+#   value   = "asverify.frontendassets.blob.core.windows.net"
+#   type    = "CNAME"
+#   ttl     = 300
+# }
+
 #######################################################################
 ### 5. Azure Container Instance:
 resource "random_id" "server" {
