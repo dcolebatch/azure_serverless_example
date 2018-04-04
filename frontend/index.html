@@ -47,9 +47,7 @@
     function makeCorsRequest() {
         // This is a sample server that supports CORS.
 
-        // var url = window.location.protocol + '//api.serverlessexample.ga/';
-        // Our ACI doesn't support HTTPS, so hardcode to:
-        var url = 'http://api.serverlessexample.ga/';
+    var url = window.location.protocol + '//api.serverlessexample.ga/';
 
         var xhr = createCORSRequest('GET', url);
         if (!xhr) {
