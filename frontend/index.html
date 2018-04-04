@@ -1,75 +1,76 @@
 <html>
-<head>
-  <title>Azure Serverless Example!</title>
-  <link rel="stylesheet" type="text/css" href="main.css" /> 
-</head>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Azure Serverless Example!</title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+  </head>
 
-<body>
+  <body>
 
-<div align="center">
-<h1>Welcome to Azure!</h1>
-<div id="main">
-  <p>This <a href="https://github.com/dcolebatch/azure_serverless_example/tree/master/frontend">HTML, CSS and JavaScript</a> are brought to you by the Azure Premium (Verizon) CDN, and Azure Blob Storage.
-  For some serverless logic, the cat below is selected by an <a href="https://github.com/dcolebatch/azure_serverless_example/tree/master/api">API written in Node.js</a> and running on an Azure Container Instance.</p>
-  <p>Naturally, the whole setup is managed by <a href="https://github.com/dcolebatch/azure_serverless_example/tree/master/setup">Terraform.</a></p>
-  <img id="cat" src="#"/>
-</div>
+    <div align="center">
+      <h1>Welcome to Azure!</h1>
+      <div id="main">
+        <p>This <a href="https://github.com/dcolebatch/azure_serverless_example/tree/master/frontend">HTML, CSS and JavaScript</a> are brought to you by the Azure Premium (Verizon) CDN, and Azure Blob Storage.
+          For some serverless logic, the cat below is selected by an <a href="https://github.com/dcolebatch/azure_serverless_example/tree/master/api">API written in Node.js</a> and running on an Azure Container Instance.</p>
+        <p>Naturally, the whole setup is managed by <a href="https://github.com/dcolebatch/azure_serverless_example/tree/master/setup">Terraform.</a></p>
+        <img id="cat" src="#"/>
+      </div>
 
-<div class="ocean">
-  <div class="wave"></div>
-  <div class="wave"></div>
-</div>
+      <div class="ocean">
+        <div class="wave"><div></div></div>
+        <div class="wave"><div></div></div>
+      </div>
 
-<div class="footer">
-  <p>Migrating to Azure? Do your <em>Discovery, Application Assessment and Transition Planning</em> with ease, with <a href="https://tidalmigrations.com">Tidal Migrations</a>.</p>
-</div>
-</body>
-<script type="text/javascript">
-  // Create the XHR object.
-  function createCORSRequest(method, url) {
-    var xhr = new XMLHttpRequest();
-    if ("withCredentials" in xhr) {
-      // XHR for Chrome/Firefox/Opera/Safari.
-      xhr.open(method, url, true);
-    } else if (typeof XDomainRequest != "undefined") {
-      // XDomainRequest for IE.
-      xhr = new XDomainRequest();
-      xhr.open(method, url);
-    } else {
-      // CORS not supported.
-      xhr = null;
-    }
-    return xhr;
-  }
-
-  // Make the actual CORS request.
-  function makeCorsRequest() {
-    // This is a sample server that supports CORS.
-
-    // var url = window.location.protocol + '//api.serverlessexample.ga/';
-    // Our ACI doesn't support HTTPS, so hardcode to:
-    var url = 'http://api.serverlessexample.ga/';
-
-    var xhr = createCORSRequest('GET', url);
-    if (!xhr) {
-      console.log('CORS not supported');
-      return;
+      <div class="footer">
+        <p>Migrating to Azure? Do your <em>Discovery, Application Assessment and Transition Planning</em> with ease, with <a href="https://tidalmigrations.com">Tidal Migrations</a>.</p>
+      </div>
+  </body>
+  <script type="text/javascript">
+    // Create the XHR object.
+    function createCORSRequest(method, url) {
+        var xhr = new XMLHttpRequest();
+        if ("withCredentials" in xhr) {
+            // XHR for Chrome/Firefox/Opera/Safari.
+            xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+            // XDomainRequest for IE.
+            xhr = new XDomainRequest();
+            xhr.open(method, url);
+        } else {
+            // CORS not supported.
+            xhr = null;
+        }
+        return xhr;
     }
 
-    // Response handlers.
-    xhr.onload = function() {
-      var text = xhr.responseText;
-      console.log('Response from CORS request to ' + url + ': ' + text);
-      document.getElementById("cat").src=text;
-    };
+    // Make the actual CORS request.
+    function makeCorsRequest() {
+        // This is a sample server that supports CORS.
 
-    xhr.onerror = function() {
-    console.log('Woops, there was an error making the request.');
-    };
+        // var url = window.location.protocol + '//api.serverlessexample.ga/';
+        // Our ACI doesn't support HTTPS, so hardcode to:
+        var url = 'http://api.serverlessexample.ga/';
 
-    xhr.send();
-  }
-  makeCorsRequest();
-</script>
+        var xhr = createCORSRequest('GET', url);
+        if (!xhr) {
+            console.log('CORS not supported');
+            return;
+        }
+
+        // Response handlers.
+        xhr.onload = function() {
+            var text = xhr.responseText;
+            console.log('Response from CORS request to ' + url + ': ' + text);
+            document.getElementById("cat").src=text;
+        };
+
+        xhr.onerror = function() {
+            console.log('Woops, there was an error making the request.');
+        };
+
+        xhr.send();
+    }
+    makeCorsRequest();
+  </script>
 </html>
 
