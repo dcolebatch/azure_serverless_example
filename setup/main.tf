@@ -98,33 +98,23 @@ output "css" {
 # Since we want to make use of a free CDN and SSL termination service,
 # head over to CloudFlare.com, create your domain, and use the below to 
 # configure it.  
-resource "cloudflare_record" "cfmeow" {
+resource "cloudflare_record" "cfapi" {
   domain  = "serverlessexample.ga"
-  name    = "meow"
+  name    = "api"
   value   = "${azurerm_container_group.aci-api.ip_address}"
   type    = "A"
   # Enabling CDN is as easy as:
   proxied = true
-  # ttl of 1 is "Automatic" in CloudFlare.  If you're using CDN, you
-  # want this
-  ttl     = 1
-}
-resource "cloudflare_record" "cfapi" {
-  domain  = "serverlessexample.ga"
-  name    = "api"
-  value   = "meow.azureedge.net"
-  type    = "CNAME"
-  proxied = true
+  # ttl of 1 is "Automatic" in CloudFlare.  When using CDN, we want this:
   ttl     = 1
 }
 
 resource "cloudflare_record" "cfazure" {
   domain  = "serverlessexample.ga"
   name    = "azure"
-  value   = "serverlessexample.azureedge.net"
+  value   = "frontendassets.blob.core.windows.net"
   type    = "CNAME"
-  proxied = true
-  ttl     = 1
+  ttl     = 300
 }
 
 #######################################################################
@@ -193,6 +183,9 @@ resource "azurerm_container_group" "aci-api" {
   }
 }
 
+output "frontend_endpoint" {
+  value = "azure.serverlessexample.ga => ${cloudflare_record.cfazure.value}"
+}
 output "api_endpoint" {
   value = "api.serverlessexample.ga => ${azurerm_container_group.aci-api.ip_address}"
 }
