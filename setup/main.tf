@@ -50,7 +50,7 @@ resource "azurerm_storage_account" "frontend" {
 }
 
 resource "azurerm_storage_container" "frontend" {
-  name                  = "frontendassets"
+  name                  = "$root"
   resource_group_name   = "${azurerm_resource_group.serverless.name}"
   storage_account_name  = "${azurerm_storage_account.frontend.name}"
   container_access_type = "blob"
@@ -150,7 +150,6 @@ resource "azurerm_container_group" "aci-api" {
   location            = "${azurerm_resource_group.serverless.location}"
   resource_group_name = "${azurerm_resource_group.serverless.name}"
   ip_address_type     = "public"
-  #dns_label_name      = "aci-label"
   os_type             = "linux"
 
   container {
@@ -163,9 +162,6 @@ resource "azurerm_container_group" "aci-api" {
     environment_variables {
       "NODE_ENV" = "production"
     }
-
-    # If you need an entrypoint:
-    # command = "/bin/bash -c '/path to/myscript.sh'"
 
     volume {
       name       = "logs"
