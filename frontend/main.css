@@ -1,6 +1,7 @@
 // best seen at 1500px or less
 
-html, body { height: 100%; }
+html, body { height: 100%;
+             width: 100%;}
 body {
   background:radial-gradient(ellipse at center, rgba(255,254,234,1) 0%, rgba(255,254,234,1) 35%, #B7E8EB 100%);
   overflow: hidden;
@@ -24,12 +25,13 @@ p,a,a:visited {
 }
 
 #cat {
-  max-height: 250px;
-  padding-left: 100px;
+    max-height: 250px;
+    display: block;
+    margin: auto;
 }
 
 .footer {
-  position: fixed;
+  position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
@@ -66,7 +68,7 @@ p,a,a:visited {
 }
 .wave:nth-of-type(2) {
   top: -175px;
-  animation: wave 20s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -5.125s infinite, swell 20s ease -5.25s infinite;
+  animation: wave 20s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -5.125s infinite;
 }
 
 @keyframes wave {
@@ -82,4 +84,24 @@ p,a,a:visited {
   50% {
     transform: translateY(5px);
   }
+}
+
+@media screen and (max-width: 720px){
+    h1{
+        font-size: 3em;
+    }
+
+    #cat{
+        max-height: 200px;
+    }
+
+    .wave{
+        top: -150px;
+    }
+    .wave:nth-of-type(2) {
+        top: -127px;
+    }
+    .wave div {
+        height: 150px;
+    }
 }
