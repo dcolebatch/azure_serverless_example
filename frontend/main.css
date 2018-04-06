@@ -32,6 +32,7 @@ p,a,a:visited {
 
 .footer {
   position: fixed;
+  background: rgba(1, 88, 112, .50);
   left: 0;
   bottom: 0;
   width: 100%;
@@ -42,32 +43,34 @@ p,a,a:visited {
   font-weight: lighter;
 }
 
-.ocean { 
-  height: 5%;
+.ocean {
+    height: 20px;
   width:100%;
-  position:absolute;
+  position:fixed;
   bottom:0;
   left:0;
-  background: #015871;
+  background: #015870;
 }
 
 .wave {
-  position: absolute;
-  top: -198px;
+  position: fixed;
+  bottom: 20px;
   animation: wave 20s cubic-bezier( 0.36, 0.45, 0.63, 0.53) infinite;
 }
 
 .wave div {
-  background: url(http://s3.ca-central-1.amazonaws.com/tidal-serverless-example/wave.min.png) repeat-x;
+    background: url(http://s3.ca-central-1.amazonaws.com/tidal-serverless-example/wave.min.png) repeat-x;
+    overflow-x: hidden;
+  overflow-y: visible;
   width: 6400px;
   height: 198px;
 }
 
 .wave:nth-of-type(2) div {
-  animation: swell 20s ease -5.25s infinite;
+  animation: swell 15s ease -5.25s infinite;
 }
 .wave:nth-of-type(2) {
-  top: -175px;
+  bottom: 23px;
   animation: wave 20s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -5.125s infinite;
 }
 
@@ -93,13 +96,6 @@ p,a,a:visited {
 
     #cat{
         max-height: 200px;
-    }
-
-    .wave{
-        top: -150px;
-    }
-    .wave:nth-of-type(2) {
-        top: -127px;
     }
     .wave div {
         height: 150px;
