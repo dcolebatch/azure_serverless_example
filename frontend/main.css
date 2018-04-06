@@ -25,13 +25,13 @@ p,a,a:visited {
 }
 
 #cat {
-    max-height: 250px;
-    display: block;
-    margin: auto;
+  max-height: 250px;
+  display: block;
+  margin: auto;
 }
 
 .footer {
-  position: absolute;
+  position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
