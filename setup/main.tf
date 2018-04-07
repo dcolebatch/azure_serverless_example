@@ -47,6 +47,10 @@ resource "azurerm_storage_account" "frontend" {
   account_tier        = "Standard"
 
   account_replication_type = "LRS"
+  
+  custom_domain {
+    name = "azure.serverlessexample.ga"
+  }
 }
 
 resource "azurerm_storage_container" "frontend" {
@@ -114,7 +118,8 @@ resource "cloudflare_record" "cfazure" {
   name    = "azure"
   value   = "frontendassets.blob.core.windows.net"
   type    = "CNAME"
-  ttl     = 300
+  proxied = true
+  ttl     = 1
 }
 
 # If you need to use the "Indirect CNAME Verification" method, you'll
