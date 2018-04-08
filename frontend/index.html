@@ -46,9 +46,10 @@
 
     // Make the actual CORS request.
     function makeCorsRequest() {
-        // This is a sample server that supports CORS.
-
-    var url = window.location.protocol + '//api.serverlessexample.ga/';
+      // This is a sample server that supports CORS.
+      var url = window.location.protocol + '//api.serverlessexample.ga/';
+      // Using our Azure Function:
+      // var url = 'https://randomcats-azure-functions.azurewebsites.net/api/meow';
 
         var xhr = createCORSRequest('GET', url);
         if (!xhr) {

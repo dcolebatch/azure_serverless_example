@@ -102,17 +102,6 @@ output "css" {
 # Since we want to make use of a free CDN and SSL termination service,
 # head over to CloudFlare.com, create your domain, and use the below to 
 # configure it.  
-resource "cloudflare_record" "cfapi" {
-  domain  = "serverlessexample.ga"
-  name    = "api"
-  value   = "${azurerm_container_group.aci-api.ip_address}"
-  type    = "A"
-  # Enabling CDN is as easy as:
-  proxied = true
-  # ttl of 1 is "Automatic" in CloudFlare.  When using CDN, we want this:
-  ttl     = 1
-}
-
 resource "cloudflare_record" "cfazure" {
   domain  = "serverlessexample.ga"
   name    = "azure"
@@ -133,71 +122,42 @@ resource "cloudflare_record" "cfazure" {
 #   ttl     = 300
 # }
 
+
 #######################################################################
-### 5. Azure Container Instance:
-resource "random_id" "server" {
-  keepers = {
-    azi_id = 1
-  }
-
-  byte_length = 8
-}
-
-resource "azurerm_storage_account" "aci-sa" {
-  name                = "acisaexample"
-  resource_group_name = "${azurerm_resource_group.serverless.name}"
-  location            = "${azurerm_resource_group.serverless.location}"
-  account_tier        = "Standard"
-
+### 5. Azure Function
+resource "azurerm_storage_account" "function" {
+  name                     = "functionsappexample"
+  resource_group_name      = "${azurerm_resource_group.serverless.name}"
+  location                 = "${azurerm_resource_group.serverless.location}"
+  account_tier             = "Standard"
   account_replication_type = "LRS"
 }
 
-resource "azurerm_storage_share" "aci-share" {
-  name = "aci-test-share"
-
-  resource_group_name  = "${azurerm_resource_group.serverless.name}"
-  storage_account_name = "${azurerm_storage_account.aci-sa.name}"
-
-  quota = 50
-}
-
-resource "azurerm_container_group" "aci-api" {
-  name                = "aci-api"
+resource "azurerm_app_service_plan" "functions" {
+  name                = "azure-functions-example-sp"
   location            = "${azurerm_resource_group.serverless.location}"
   resource_group_name = "${azurerm_resource_group.serverless.name}"
-  ip_address_type     = "public"
-  os_type             = "linux"
+  kind                = "FunctionApp"
 
-  container {
-    name   = "meow"
-    image  = "dcolebatch/random-cats"
-    cpu    ="0.5"
-    memory =  "0.5"
-    port   = "80"
-
-    environment_variables {
-      "NODE_ENV" = "production"
-    }
-
-    volume {
-      name       = "logs"
-      mount_path = "/aci/logs"
-      read_only  = false
-      share_name = "${azurerm_storage_share.aci-share.name}"
-
-      storage_account_name  = "${azurerm_storage_account.aci-sa.name}"
-      storage_account_key   = "${azurerm_storage_account.aci-sa.primary_access_key}"
-    }
-  }
-
-  tags {
-    environment = "Serverless Example"
+  sku {
+    tier = "Dynamic"
+    size = "Y1"
   }
 }
+
+resource "azurerm_function_app" "randomcats" {
+  name                      = "randomcats-azure-functions"
+  location                  = "${azurerm_resource_group.serverless.location}"
+  resource_group_name       = "${azurerm_resource_group.serverless.name}"
+  app_service_plan_id       = "${azurerm_app_service_plan.functions.id}"
+  storage_connection_string = "${azurerm_storage_account.function.primary_connection_string}"
+}
+
 
 output "frontend_endpoint" {
   value = "azure.serverlessexample.ga => ${cloudflare_record.cfazure.value}"
 }
-output "api_endpoint" {
-  value = "api.serverlessexample.ga => ${azurerm_container_group.aci-api.ip_address}"
+output "function_endpoint" {
+  value = "${azurerm_function_app.randomcats.name}.azurewebsites.net"
 }
+
